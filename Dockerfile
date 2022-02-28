@@ -39,13 +39,22 @@ COPY . .
 
 ####################################################################################################
 
-FROM alpine:3 as argoexec-base
+FROM docker.io/library/debian:10-slim as argoexec-base
 
 ARG DOCKER_CHANNEL
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
 
-RUN apk --no-cache add curl procps git tar libcap jq
+RUN apt-get update && \
+    apt-get --no-install-recommends install -y curl jq procps git apt-utils apt-transport-https ca-certificates tar mime-support libcap2-bin && \
+    apt-get clean \
+    && rm -rf \
+        /var/lib/apt/lists/* \
+        /tmp/* \
+        /var/tmp/* \
+        /usr/share/man \
+        /usr/share/doc \
+        /usr/share/doc-base
 
 COPY hack/arch.sh hack/os.sh /bin/
 
